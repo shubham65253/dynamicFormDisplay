@@ -35,13 +35,17 @@ public class TestController {
     public Component setComponent(@Valid @RequestBody Component component){
         return componentService.saveComponent(component);
     }
+    @PostMapping("/setform")
+    public Form setForm(@Valid @RequestBody Form form){
+        return formService.saveForm(form);
+    }
     @GetMapping("/getallrows")
     public List<Row> getAllRows(){
         List<Row> rowList = rowService.getAllRows();
         return rowList;
     }
     @GetMapping("/getform")
-    public Form getForm(){
+    public List<Form> getForm(){
         return formService.getAllForm();
     }
 
