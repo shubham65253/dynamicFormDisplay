@@ -8,29 +8,46 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 public class RandomAI {
-    public int[][] board = new int[5][5];
+//    public int[][] board = new int[5][5];
     private Set<Point> pointSet;
     private List<Point> points = new ArrayList<>();
     public void init(){
         for(int i=0; i<5; i++){
             for(int j=0; j<5; j++){
-                points.add(new Point(i, j));
-                board[i][j]=0;
+//                points.add(new Point(i, j));
+//                board[i][j]=0;
             }
         }
         pointSet = new HashSet<>(points);
     }
-    public Point nextMove(Integer player){
-        Random rand = new Random();
-        int index = rand.nextInt(points.size());
-        Point targetPoint = new Point(points.get(index).getX(), points.get(index).getY());
-        points.remove(points.get(index));
-        pointSet = new HashSet<>();
-        pointSet.addAll(points);
+    public Point nextMove(Integer player, int[][]board){
+        int sum = 0;
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++)
+                sum+=board[i][j];
+        }
+        if(sum<14){
+            Random rand = new Random();
+            for(int i=0; i<5; i++){
+                for(int j=0; j<5; j++){
+                    if(board[i][j]==0)
+                        points.add(new Point(i, j));
+                }
+            }
+            int index = rand.nextInt(points.size());
+            Point targetPoint = new Point(points.get(index).getX(), points.get(index).getY());
+            return targetPoint;
+        }
+        BotRunner botRunner = new BotRunner();
+        int [][]cpBoard = new int[5][5];
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++)cpBoard[i][j] = board[i][j];
+        }
+        Point targetPoint = botRunner.makeMove(cpBoard,player);
         board[targetPoint.getX()][targetPoint.getY()] = player;
         return targetPoint;
     }
-    public int checkWinner(Integer player){
+    public int checkWinner(Integer player, int[][]board){
         int [] currentWindow = new int[4];
         for(int i = 0; i<5; i++){
             for(int j = 0; j<2;j++){
@@ -108,7 +125,7 @@ public class RandomAI {
         return 0;
     }
 
-    public void printBoard() {
+    public void printBoard(int [][] board) {
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++){
                 System.out.print(board[i][j] + ", ");
@@ -118,7 +135,7 @@ public class RandomAI {
         System.out.println("");
     }
 
-    public String flattenBoard(int id, int winner, int firstPlayer) {
+    public String flattenBoard(int id, int winner, int firstPlayer, int [][] board) {
         String ret = "" + id;
         ret = ret + ", ";
         ret = ret + firstPlayer + ", ";
